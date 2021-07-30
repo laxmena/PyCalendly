@@ -1,19 +1,21 @@
-from setuptools import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
-long_desc = open("README.md").read() + "\n\n" + open("HISTORY.md").read()
+long_desc = open("README.md").read()
 required = ['requests']
 
 setup(
     name='PyCalendly',
     version="0.0.1",
-    maintainer="laxmena",
-    maintainer_email="ConnectWith@laxmena.com",
+    author="laxmena",
+    author_email="ConnectWith@laxmena.com",
     license="MIT",
     url="https://github.com/laxmena/PyCalendly",
     download_url="https://github.com/laxmena/PyCalendly",
     long_description=long_desc,
     long_description_content_type="text/markdown",
-    version='1.0.0',
     description="Python wrapper for Calendly API v2 (https://calendly.stoplight.io/docs/api-docs/docs/C-API-Conventions.md)",
     packages=[
         'calendly',
@@ -28,5 +30,6 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development",
         "Programming Language :: Python"
-    ]
+    ],
+    python_requires=">3.6",
 )
