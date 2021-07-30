@@ -1,5 +1,6 @@
 # PyCalendly
 <a href="https://codeclimate.com/github/laxmena/PyCalendly/maintainability"><img src="https://api.codeclimate.com/v1/badges/12cadf4283a14dbb59eb/maintainability" /></a>
+
 Python package to use [Calendly](https://calendly.com/) [API-v2](https://calendly.stoplight.io/docs/api-docs/docs/C-API-Conventions.md).
 
 ## Installation
