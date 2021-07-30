@@ -1,4 +1,5 @@
 # PyCalendly
+<a href="https://codeclimate.com/github/laxmena/PyCalendly/maintainability"><img src="https://api.codeclimate.com/v1/badges/12cadf4283a14dbb59eb/maintainability" /></a>
 Python package to use [Calendly](https://calendly.com/) [API-v2](https://calendly.stoplight.io/docs/api-docs/docs/C-API-Conventions.md).
 
 ## Installation
@@ -15,6 +16,23 @@ from calendly import Calendly
 api_key = "<Personal Access Token>"
 calendly = Calendly(api_key)
 ```
+### Webhooks
+- `create_webhook` - Create new Webhook subscription
+- `list_webhooks` - List available Webhook subscriptions
+- `delete_webhook` - Delete a previously subscribed webhook
+- `get_webhook` - Get information about a specific webhook
+
+### User
+- `about` - Basic information about the current user
+
+### Events
+- `event_types` - Returns all event types associated with the event
+- `get_event_type` - Get type associated with the specific event
+- `list_events` - Returns available list of events
+- `get_event_invitee` - Returns invitee information associated with the event
+- `get_event_details` - Get information about the event
+- `list_event_invitees` - Get all invitees for a event
+
 
 ## Issues
 Feel free to submit issues and enhancement requests.
