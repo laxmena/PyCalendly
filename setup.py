@@ -15,6 +15,10 @@ setup(
     long_description_content_type="text/markdown",
     version='1.0.0',
     description="Python wrapper for Calendly API v2 (https://calendly.stoplight.io/docs/api-docs/docs/C-API-Conventions.md)",
+    packages=[
+        'calendly',
+        'calendly.utils'
+    ],
     include_package_data=True,
     zip_safe=False,
     install_requires=required,
