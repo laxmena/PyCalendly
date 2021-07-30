@@ -16,7 +16,7 @@ setup(
     download_url="https://github.com/laxmena/PyCalendly",
     long_description=long_desc,
     long_description_content_type="text/markdown",
-    description="Python wrapper for Calendly API v2 (https://calendly.stoplight.io/docs/api-docs/docs/C-API-Conventions.md)",
+    description="Python wrapper for Calendly API v2",
     packages=[
         'calendly',
         'calendly.utils'
