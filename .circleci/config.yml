@@ -1,0 +1,18 @@
+version: 1.0
+jobs:
+    build:
+        docker:
+            - image: circleci/python:latest
+        steps:
+            - checkout  # checkout source code to working directory
+            - run:
+                name: Install dependencies
+                command: |
+                    python -m virtualenv venv
+                    . venv/bin/activate
+                    pip install --no-cache-dir -r requirements.txt
+            - run: 
+                name: Running tests
+                command: |
+                    . venv/bin/activate
+                    pytest
