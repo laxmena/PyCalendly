@@ -42,9 +42,9 @@ jobs:
                   . env/bin/activate
                   pip install --no-cache-dir -r requirements.txt
 
-      - run:
-          name: Run tests
-          # This assumes pytest is installed via the install-package step above
-          command: |
-                  . env/bin/activate
-                  pytest
+      # - run:
+      #     name: Run tests
+      #     # This assumes pytest is installed via the install-package step above
+      #     command: |
+      #             . env/bin/activate
+      #             pytest
