@@ -1,3 +1,3 @@
-from .calendly import Calendly
+from .calendly import CalendlyAPI
 
-__all__ = [Calendly]
+__all__ = [CalendlyAPI]

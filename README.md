@@ -13,9 +13,9 @@ $ pip install PyCalendly
 See [Getting Started with Calendly API](https://developer.calendly.com/getting-started) and get a Personal Access token.
 
 ```
-from calendly import Calendly
+from calendly import CalendlyAPI
 api_key = "<Personal Access Token>"
-calendly = Calendly(api_key)
+calendly = CalendlyAPI(api_key)
 ```
 ### Webhooks
 - `create_webhook` - Create new Webhook subscription
