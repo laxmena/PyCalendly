@@ -1,0 +1,33 @@
+{
+    "resource": {
+      "uri": "https://api.calendly.com/scheduled_events/MOCK_URI",
+      "name": "15 Minute Meeting",
+      "status": "active",
+      "start_time": "2019-08-24T14:15:22Z",
+      "end_time": "2019-08-24T14:15:22Z",
+      "event_type": "https://api.calendly.com/event_types/MOCK_URI",
+      "location": {
+        "type": "physical",
+        "location": "Calendly Office"
+      },
+      "invitees_counter": {
+        "total": 0,
+        "active": 0,
+        "limit": 0
+      },
+      "created_at": "2019-01-02T03:04:05.678Z",
+      "updated_at": "2019-01-02T03:04:05.678Z",
+      "event_memberships": [
+        {
+          "user": "https://api.calendly.com/users/MOCK_URI"
+        }
+      ],
+      "event_guests": [
+        {
+          "email": "user@example.com",
+          "created_at": "2019-08-24T14:15:22Z",
+          "updated_at": "2019-08-24T14:15:22Z"
+        }
+      ]
+    }
+  }

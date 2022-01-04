@@ -238,3 +238,73 @@ class CalendlyAPI(object):
         url = f'{EVENTS}/' + uuid + '/invitees'
         response = self.request.get(url)
         return response.json()
+
+    def get_all_event_types(self, user_uri: str) -> List[str]:
+        """
+        Get all event types by recursively crawling on all result pages.
+
+        Args:
+            user_uri (str, optional): User URI.
+
+        Returns:
+            list: json event type objects
+        """
+        first = self.list_event_types(user_uri=user_uri, count=100)
+        next_page = first['pagination']['next_page']
+        
+        data = first['collection']
+
+        while (next_page):
+            page = self.request.get(next_page).json()
+            data += page['collection']
+            next_page = page['pagination']['next_page']
+        
+        return data
+
+    def get_all_scheduled_events(self, user_uri: str) -> List[str]:
+        """
+        Get all scheduled events by recursively crawling on all result pages.
+
+        Args:
+            user_uri (str, optional): User URI.
+
+        Returns:
+            list: json scheduled event objects
+        """
+        first = self.list_events(user_uri=user_uri, count=100)
+        next_page = first['pagination']['next_page']
+        
+        data = first['collection']
+
+        while (next_page):
+            page = self.request.get(next_page).json()
+            data += page['collection']
+            next_page = page['pagination']['next_page']
+        
+        return data
+
+    def convert_event_to_original_url(self, event_uri: str, user_uri: str) -> str:
+        """
+        Convert event url from calendly's inner API convention to the original public url of the event.
+
+        Args:
+            event_uri (str): Event URI.
+            user_uri (str, optional): User URI.
+
+        Returns:
+            string: the public convention of the event's url
+        """
+        event_type_uri = self.get_event_details(event_uri)['resource']['event_type']
+        page = self.list_event_types(user_uri=user_uri)
+
+        while True:
+            filtered_result = next(filter(lambda event: event['uri'] == event_type_uri, page['collection']), None)
+            if filtered_result:
+                return filtered_result['scheduling_url']
+
+            next_page = page['pagination']['next_page']
+            if not next_page:
+                break
+            page = self.request.get(next_page).json()
+        return
+        
