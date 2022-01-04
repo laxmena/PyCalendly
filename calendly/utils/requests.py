@@ -1,13 +1,11 @@
 import requests
-import json
+from typing import List, MutableMapping
 
 __author__ = "laxmena <ConnectWith@laxmena.com>"
 __license__ = "MIT"
 
-
 class CalendlyException(Exception):
     """Errors corresponding to a misuse of Calendly API"""
-
 
 class CalendlyReq(object):
     """
@@ -18,7 +16,7 @@ class CalendlyReq(object):
     https://calendly.stoplight.io/docs/api-docs/
     """
 
-    def __init__(self, token):
+    def __init__(self, token: str):
         """
         Constructor. Uses Bearer Token Authentication.
 
@@ -29,7 +27,7 @@ class CalendlyReq(object):
         """
         self.headers = {'authorization': 'Bearer ' + token}
 
-    def process_request(self, method, url, data=None):
+    def process_request(self, method: str, url: str, data: MutableMapping=None) -> requests.Response:
         """
         Make requests to Calendly API by appending requried headers. 
 
@@ -45,7 +43,7 @@ class CalendlyReq(object):
         request_method = getattr(requests, method)
         return request_method(url, json=data, headers=self.headers)
 
-    def get(self, url, data=None):
+    def get(self, url: str, data: MutableMapping=None) -> requests.Response:
         """
         Send GET request to the Calendly URL.
 
@@ -58,7 +56,7 @@ class CalendlyReq(object):
         """
         return self.process_request('get', url, data)
 
-    def post(self, url, data=None):
+    def post(self, url: str, data: MutableMapping=None) -> requests.Response:
         """
         Send POST request to the Calendly URL.
 
@@ -71,7 +69,7 @@ class CalendlyReq(object):
         """
         return self.process_request('post', url, data)
 
-    def delete(self, url, data=None):
+    def delete(self, url: str, data: MutableMapping=None) -> requests.Response:
         """
         Send DELETE request to the Calendly URL.
 
@@ -84,7 +82,7 @@ class CalendlyReq(object):
         """
         return self.process_request('delete', url, data)
 
-    def put(self, url, data=None):
+    def put(self, url: str, data: MutableMapping=None) -> requests.Response:
         """
         Send PUT request to the Calendly URL.
 
