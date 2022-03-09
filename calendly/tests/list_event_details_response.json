@@ -1,0 +1,88 @@
+{
+    "collection": [
+      {
+        "uri": "https://api.calendly.com/event_types/MOCK_URI",
+        "name": "15 Minute Meeting",
+        "active": true,
+        "slug": "acmesales",
+        "scheduling_url": "https://calendly.com/acmesales",
+        "duration": 30,
+        "kind": "solo",
+        "pooling_type": "round_robin",
+        "type": "StandardEventType",
+        "color": "#fff200",
+        "created_at": "2019-01-02T03:04:05.678Z",
+        "updated_at": "2019-08-07T06:05:04.321Z",
+        "internal_note": "Internal note",
+        "description_plain": "15 Minute Meeting",
+        "description_html": "<p>15 Minute Meeting</p>",
+        "profile": {
+          "type": "User",
+          "name": "Tamara Jones",
+          "owner": "https://api.calendly.com/users/AAAAAAAAAAAAAAAA"
+        },
+        "secret": true,
+        "custom_questions": [
+          {
+            "name": "Company Name",
+            "type": "string",
+            "position": 0,
+            "enabled": true,
+            "required": true,
+            "answer_choices": [],
+            "include_other": false
+          },
+          {
+            "name": "What would you like to discuss?",
+            "type": "text",
+            "position": 0,
+            "enabled": true,
+            "required": true,
+            "answer_choices": [],
+            "include_other": false
+          },
+          {
+            "name": "Number of employees",
+            "answer_choices": [
+              "1",
+              "2-10",
+              "11-20",
+              "20+"
+            ],
+            "enabled": true,
+            "include_other": true,
+            "position": 2,
+            "required": false,
+            "type": "single_select"
+          },
+          {
+            "name": "Multi-Select Question",
+            "answer_choices": [
+              "Answer 1",
+              "Answer 2",
+              "Answer 3",
+              "Answer 4"
+            ],
+            "enabled": true,
+            "include_other": true,
+            "position": 2,
+            "required": false,
+            "type": "multi_select"
+          },
+          {
+            "name": "Phone Number",
+            "type": "phone_number",
+            "position": 0,
+            "enabled": true,
+            "required": true,
+            "answer_choices": [],
+            "include_other": false
+          }
+        ]
+      }
+    ],
+    "pagination": {
+      "count": 1,
+      "next_page": "https://api.calendly.com/event_types?count=1&page_token=MOCK_PAGE_TOKEN"
+    }
+  }
