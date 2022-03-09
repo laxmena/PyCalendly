@@ -1,7 +1,10 @@
-from calendly.utils.constants import WEBHOOK, EVENTS, ME, EVENT_TYPE
-from calendly.utils.requests import CalendlyReq, CalendlyException
+import json
 from typing import List, MutableMapping
-import json 
+
+from calendly.utils.api import CalendlyReq
+from calendly.utils.constants import WEBHOOK, EVENTS, ME, EVENT_TYPE
+from calendly.utils.exceptions import CalendlyException
+
 
 class CalendlyAPI(object):
 
@@ -21,7 +24,7 @@ class CalendlyAPI(object):
         """
         self.request = CalendlyReq(token)
 
-    def create_webhook(self, url: str, scope: str, organization: str, signing_key: str=None, user: str=None, event_types: List[str]=["canceled", "created"]) -> MutableMapping:
+    def create_webhook(self, url: str, scope: str, organization: str, signing_key: str=None, user: str=None, event_types: List[str]=("canceled", "created")) -> MutableMapping:
         """
         Create a Webhook Subscription
 
@@ -29,6 +32,7 @@ class CalendlyAPI(object):
             url (str): Webhook URL
             scope (str): Either "organization" or "user"
             organization (str): Unique reference to the organization that the webhook will be tied to
+            signing_key (str): A signing key
             user (str, optional): If scope is set to "user", then user reference is required.
             event_types (list, optional): List of user events to subscribe to. Defaults to ["canceled", "created"].
 
@@ -44,8 +48,8 @@ class CalendlyAPI(object):
                 'scope': scope,
                 'signing_key': signing_key}
 
-        if (scope == 'user'):
-            if (user == None):
+        if scope == 'user':
+            if user is None:
                 raise CalendlyException
             data['user'] = user
 
