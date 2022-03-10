@@ -15,8 +15,12 @@ class CalendlyReq(object):
     https://calendly.stoplight.io/docs/api-docs/
     """
 
-    ERROR_TYPE_KEY = 'error'
-    ERROR_DESCRIPTION_KEY = 'error_description'
+    OAUTH2_ERROR_TYPE_KEY = 'error'
+    OAUTH2_ERROR_DESCRIPTION_KEY = 'error_description'
+
+    API_ERROR_TYPE_KEY = "title"
+    API_ERROR_DESCRIPTION_KEY = "message"
+    API_ERROR_DETAILS_KEY = "details"
 
     def __init__(self, token: str=None, headers: dict=None):
         """
@@ -37,12 +41,38 @@ class CalendlyReq(object):
 
         self.headers = headers
 
-    def _get_error_type_and_description_from_response(self, response):
+    def _get_oauth2_error_from_response(self,response):
         try:
             resp = response.json()
-            return resp[self.ERROR_TYPE_KEY], resp[self.ERROR_DESCRIPTION_KEY]
+            return resp[self.OAUTH2_ERROR_TYPE_KEY], resp[self.OAUTH2_ERROR_DESCRIPTION_KEY], []
         except (AttributeError, KeyError):
-            return "error", "Unknown Error."
+            return
+
+    def _get_api_error_from_response(self, response):
+
+        try:
+            resp = response.json()
+            errors = [resp[self.API_ERROR_TYPE_KEY], resp[self.API_ERROR_DESCRIPTION_KEY]]
+        except (AttributeError, KeyError):
+            return
+
+        try:
+            errors.append(resp[self.API_ERROR_DETAILS_KEY])
+        except (AttributeError, KeyError):
+            errors.append([])
+
+        return tuple(errors)
+
+    def _get_error_type_and_description_from_response(self, response):
+
+        oauth2_errors = self._get_oauth2_error_from_response(response)
+        if not oauth2_errors:
+            oauth2_errors = self._get_api_error_from_response(response)
+
+        if not oauth2_errors:
+            oauth2_errors = "error", "Unknown Error.", []
+
+        return  oauth2_errors
 
     def process_request(self, method: str, url: str, data: MutableMapping=None) -> requests.Response:
         """
@@ -64,10 +94,9 @@ class CalendlyReq(object):
             kwargs.update(dict(headers=self.headers))
 
         response = request_method(url, **kwargs)
-
         if response.status_code > requests.codes.permanent_redirect:
-            error_type, error_description = self._get_error_type_and_description_from_response(response)
-            raise CalendlyException(f"{error_type}: {error_description}")
+            error_type, error_description, error_details = self._get_error_type_and_description_from_response(response)
+            raise CalendlyException(f"{error_type}: {error_description}", error_details)
 
         return response
 

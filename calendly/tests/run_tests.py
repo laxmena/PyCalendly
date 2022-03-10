@@ -16,9 +16,39 @@ calendly_request = CalendlyReq(mock_token)
 calendly_client.request = calendly_request
 
 
+class TestCalendlyExceptions(unittest.TestCase):
+
+    def test_CalendlyException(self):
+        message = "SOME MESSAGE"
+        details = [{}, {}, {}]
+
+        exception = CalendlyException(message, details)
+        self.assertEqual(exception.message, message)
+        self.assertEqual(exception.details, details)
+
+        with self.assertRaises(CalendlyException):
+            raise exception
+
+    def test_CalendlyOauth2Exception(self):
+        message = "SOME MESSAGE"
+        details = [{}, {}, {}]
+
+        exception = CalendlyOauth2Exception(message, details)
+        self.assertEqual(exception.message, message)
+        self.assertEqual(exception.details, details)
+
+        with self.assertRaises(CalendlyOauth2Exception):
+            raise exception
+
 class TestCalendlyReq(unittest.TestCase):
 
     def test_constructor(self):
+        pass
+
+    def test__get_oauth2_error_from_response(self):
+        pass
+
+    def test__get_api_error_from_response(self):
         pass
 
     def test__get_error_type_and_description_from_response(self):
