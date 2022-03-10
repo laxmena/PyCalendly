@@ -335,7 +335,6 @@ class TestCalendlyOauth2(unittest.TestCase):
 
     @patch("calendly.utils.oauth2.CalendlyReq.post")
     def test_send_post(self, post_mock):
-        print("PASSING")
         args = (1,2,3)
         kwargs = {"some": "parameters"}
         response_mock = MockResponse('{}', 200)
