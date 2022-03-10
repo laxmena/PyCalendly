@@ -1,5 +1,5 @@
 from typing import MutableMapping
-from calendly.exceptions import CalendlyOauth2Exception
+from calendly.exceptions import CalendlyException
 import requests
 
 __author__ = "laxmena <ConnectWith@laxmena.com>"
