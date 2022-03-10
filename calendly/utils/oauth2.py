@@ -1,6 +1,6 @@
+from calendly.exceptions import CalendlyOauth2Exception, CalendlyException
 from .api import CalendlyReq
 from .constants import OAUTH_AUTHORIZE_URL, OAUTH_TOKEN_URL, OAUTH_REVOKE_URL, OAUTH_INTROSPECT_URL
-from calendly.exceptions import CalendlyOauth2Exception
 
 __author__ = "luis <luiscastillocr@gmail.com>"
 __license__ = "MIT"
@@ -46,6 +46,12 @@ class CalendlyOauth2(object):
 
         return f"{OAUTH_AUTHORIZE_URL}?client_id={self.client_id}&response_type={self.response_type}&redirect_uri={self.redirect_uri}"
 
+    def send_post(self, *args, **kwargs):
+        try:
+            return self.request.post(*args, **kwargs)
+        except CalendlyException as e:
+            raise CalendlyOauth2Exception(str(e))
+
     def get_access_token(self, code: str, grant_type: str=None):
 
         if not self.redirect_uri:
@@ -59,7 +65,7 @@ class CalendlyOauth2(object):
             redirect_uri=self.redirect_uri
         )
 
-        response = self.request.post(OAUTH_TOKEN_URL, data)
+        response = self.send_post(OAUTH_TOKEN_URL, data)
         return response.json()
 
     def revoke_access_token(self, token: str):
@@ -69,7 +75,7 @@ class CalendlyOauth2(object):
             token=token
         )
 
-        response = self.request.post(OAUTH_REVOKE_URL, data)
+        response = self.send_post(OAUTH_REVOKE_URL, data)
         return response.json()
 
     def refresh_access_token(self, refresh_token: str, grant_type: str=None):
@@ -80,7 +86,7 @@ class CalendlyOauth2(object):
             refresh_token=refresh_token
         )
 
-        response = self.request.post(OAUTH_TOKEN_URL, data)
+        response = self.send_post(OAUTH_TOKEN_URL, data)
         return response.json()
 
     def introspect_access_token(self, token: str):
@@ -90,7 +96,7 @@ class CalendlyOauth2(object):
             token=token
         )
 
-        response = self.request.post(OAUTH_INTROSPECT_URL, data)
+        response = self.send_post(OAUTH_INTROSPECT_URL, data)
         return response.json()
 
 

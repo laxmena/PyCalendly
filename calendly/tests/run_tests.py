@@ -4,9 +4,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from calendly.calendly import CalendlyAPI
+from calendly.exceptions import CalendlyOauth2Exception, CalendlyException
 from calendly.utils import constants
 from calendly.utils.api import CalendlyReq
-from calendly.exceptions import CalendlyOauth2Exception
 from calendly.utils.oauth2 import CalendlyOauth2
 
 # Init test objects
@@ -304,12 +304,33 @@ class TestCalendlyOauth2(unittest.TestCase):
         self.assertEqual(oauth2.authorization_url, expected_url)
 
     @patch("calendly.utils.oauth2.CalendlyReq.post")
-    def test_get_access_token(self, post_mock):
+    def test_send_post(self, post_mock):
+        print("PASSING")
+        args = (1,2,3)
+        kwargs = {"some": "parameters"}
+        response_mock = MockResponse('{}', 200)
+        post_mock.return_value = response_mock
+
+        oauth2 = CalendlyOauth2(self.client_id, self.client_secret)
+
+        returned_response = oauth2.send_post(*args, **kwargs)
+        self.assertEqual(response_mock, returned_response)
+        post_mock.assert_called_with(*args, **kwargs)
+
+        post_mock.reset_mock()
+        post_mock.side_effect = CalendlyException()
+
+        with self.assertRaises(CalendlyOauth2Exception):
+            oauth2.send_post(*args, **kwargs)
+        post_mock.assert_called_with(*args, **kwargs)
+
+    @patch("calendly.utils.oauth2.CalendlyOauth2.send_post")
+    def test_get_access_token(self, send_post_mock):
         code = "code123"
         expected_token_data = {"TOKEN": "DATA"}
         response_mock = MockResponse(json.dumps(expected_token_data), 200)
 
-        post_mock.return_value = response_mock
+        send_post_mock.return_value = response_mock
 
         oauth2 = CalendlyOauth2(
             self.client_id,
@@ -336,16 +357,16 @@ class TestCalendlyOauth2(unittest.TestCase):
 
         token_data = oauth2.get_access_token(code)
         self.assertDictEqual(token_data, expected_token_data)
-        post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
+        send_post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
 
-    @patch("calendly.utils.oauth2.CalendlyReq.post")
-    def test_get_access_token_passing_grant_type(self, post_mock):
+    @patch("calendly.utils.oauth2.CalendlyOauth2.send_post")
+    def test_get_access_token_passing_grant_type(self, send_post_mock):
         code = "code123"
         grant_type = "TYPE"
         expected_token_data = {"TOKEN": "DATA"}
         response_mock = MockResponse(json.dumps(expected_token_data), 200)
 
-        post_mock.return_value = response_mock
+        send_post_mock.return_value = response_mock
 
         oauth2 = CalendlyOauth2(
             self.client_id,
@@ -363,15 +384,15 @@ class TestCalendlyOauth2(unittest.TestCase):
 
         token_data = oauth2.get_access_token(code, grant_type)
         self.assertDictEqual(token_data, expected_token_data)
-        post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
+        send_post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
 
-    @patch("calendly.utils.oauth2.CalendlyReq.post")
-    def test_revoke_access_token(self, post_mock):
+    @patch("calendly.utils.oauth2.CalendlyOauth2.send_post")
+    def test_revoke_access_token(self, send_post_mock):
         token = "TOKEN123"
         expected_token_data = {"TOKEN": "DATA"}
         response_mock = MockResponse(json.dumps(expected_token_data), 200)
         expected_data = dict(client_id=self.client_id, client_secret=self.client_secret, token=token)
-        post_mock.return_value = response_mock
+        send_post_mock.return_value = response_mock
 
         oauth2 = CalendlyOauth2(
             self.client_id,
@@ -380,10 +401,10 @@ class TestCalendlyOauth2(unittest.TestCase):
         )
 
         oauth2.revoke_access_token(token)
-        post_mock.assert_called_with(constants.OAUTH_REVOKE_URL, expected_data)
+        send_post_mock.assert_called_with(constants.OAUTH_REVOKE_URL, expected_data)
 
-    @patch("calendly.utils.oauth2.CalendlyReq.post")
-    def test_refresh_access_token(self, post_mock):
+    @patch("calendly.utils.oauth2.CalendlyOauth2.send_post")
+    def test_refresh_access_token(self, send_post_mock):
         refresh_token = "TOKEN123"
         expected_token_data = {"TOKEN": "DATA"}
         response_mock = MockResponse(json.dumps(expected_token_data), 200)
@@ -395,7 +416,7 @@ class TestCalendlyOauth2(unittest.TestCase):
             refresh_token=refresh_token
         )
 
-        post_mock.return_value = response_mock
+        send_post_mock.return_value = response_mock
 
         oauth2 = CalendlyOauth2(
             self.client_id,
@@ -404,10 +425,10 @@ class TestCalendlyOauth2(unittest.TestCase):
         )
 
         oauth2.refresh_access_token(refresh_token)
-        post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
+        send_post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
 
-    @patch("calendly.utils.oauth2.CalendlyReq.post")
-    def test_refresh_access_token_passing_grant_type(self, post_mock):
+    @patch("calendly.utils.oauth2.CalendlyOauth2.send_post")
+    def test_refresh_access_token_passing_grant_type(self, send_post_mock):
         grant_type = "grant_type"
         refresh_token = "TOKEN123"
         expected_token_data = {"TOKEN": "DATA"}
@@ -420,7 +441,7 @@ class TestCalendlyOauth2(unittest.TestCase):
             refresh_token=refresh_token
         )
 
-        post_mock.return_value = response_mock
+        send_post_mock.return_value = response_mock
 
         oauth2 = CalendlyOauth2(
             self.client_id,
@@ -429,10 +450,10 @@ class TestCalendlyOauth2(unittest.TestCase):
         )
 
         oauth2.refresh_access_token(refresh_token, grant_type)
-        post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
+        send_post_mock.assert_called_with(constants.OAUTH_TOKEN_URL, expected_data)
 
-    @patch("calendly.utils.oauth2.CalendlyReq.post")
-    def test_introspect_access_token(self, post_mock):
+    @patch("calendly.utils.oauth2.CalendlyOauth2.send_post")
+    def test_introspect_access_token(self, send_post_mock):
         token = "TOKEN123"
         expected_token_data = {"TOKEN": "DATA"}
         response_mock = MockResponse(json.dumps(expected_token_data), 200)
@@ -443,7 +464,7 @@ class TestCalendlyOauth2(unittest.TestCase):
             token=token
         )
 
-        post_mock.return_value = response_mock
+        send_post_mock.return_value = response_mock
 
         oauth2 = CalendlyOauth2(
             self.client_id,
@@ -452,7 +473,7 @@ class TestCalendlyOauth2(unittest.TestCase):
         )
 
         oauth2.introspect_access_token(token)
-        post_mock.assert_called_with(constants.OAUTH_INTROSPECT_URL, expected_data)
+        send_post_mock.assert_called_with(constants.OAUTH_INTROSPECT_URL, expected_data)
 
 
 if __name__ == '__main__':
