@@ -3,7 +3,7 @@ from typing import List, MutableMapping
 
 from calendly.utils.api import CalendlyReq
 from calendly.utils.constants import WEBHOOK, EVENTS, ME, EVENT_TYPE
-from calendly.utils.exceptions import CalendlyException
+from calendly.exceptions import CalendlyException
 
 
 class CalendlyAPI(object):

@@ -1,6 +1,6 @@
 from .api import CalendlyReq
 from .constants import OAUTH_AUTHORIZE_URL, OAUTH_TOKEN_URL, OAUTH_REVOKE_URL, OAUTH_INTROSPECT_URL
-from .exceptions import CalendlyOauth2Exception
+from calendly.exceptions import CalendlyOauth2Exception
 
 __author__ = "luis <luiscastillocr@gmail.com>"
 __license__ = "MIT"

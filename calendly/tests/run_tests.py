@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 from calendly.calendly import CalendlyAPI
 from calendly.utils import constants
 from calendly.utils.api import CalendlyReq
-from calendly.utils.exceptions import CalendlyOauth2Exception
+from calendly.exceptions import CalendlyOauth2Exception
 from calendly.utils.oauth2 import CalendlyOauth2
 
 # Init test objects
