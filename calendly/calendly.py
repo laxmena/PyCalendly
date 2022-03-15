@@ -135,7 +135,7 @@ class CalendlyAPI(object):
         response = self.request.get(ME)
         return response.json()
 
-    def list_event_types(self, count: int=20, organization: str=None, page_token: str=None, sort: str=None, user_uri: str=None) -> List[MutableMapping]:
+    def list_event_types(self, count: int=20, organization: str=None, page_token: str=None, sort: str=None, user_uri: str=None) -> MutableMapping:
         """
         Returns all Event Types associated with a specified user.
 
@@ -150,13 +150,13 @@ class CalendlyAPI(object):
             dict: json decoded response with list of event types
         """
         data = {"count": count}
-        if (organization):
+        if organization:
             data['organization'] = organization
-        if (page_token):
+        if page_token:
             data['page_token'] = page_token
-        if (sort):
+        if sort:
             data['sort'] = sort
-        if (user_uri):
+        if user_uri:
             data['user'] = user_uri
         response = self.request.get(EVENT_TYPE, data)
         return response.json()
@@ -174,7 +174,7 @@ class CalendlyAPI(object):
         response = self.request.get(f'{EVENT_TYPE}/' + uuid, data)
         return response.json()
 
-    def list_events(self, count: int=20, organization: str=None, sort: str=None, user_uri: str=None, status: str=None) -> List[MutableMapping]:
+    def list_events(self, count: int=20, organization: str=None, sort: str=None, user_uri: str=None, status: str=None) -> MutableMapping:
         """
         Returns a List of Events
 
@@ -189,13 +189,13 @@ class CalendlyAPI(object):
             dict: json decoded response of list of events.
         """
         data = {'count': count}
-        if (organization):
+        if organization:
             data['organization'] = organization
-        if (sort):
+        if sort:
             data['sort'] = sort
-        if (user_uri):
+        if user_uri:
             data['user'] = user_uri
-        if (status):
+        if status:
             data['status'] = status
         response = self.request.get(EVENTS, data)
         return response.json()
@@ -243,7 +243,7 @@ class CalendlyAPI(object):
         response = self.request.get(url)
         return response.json()
 
-    def get_all_event_types(self, user_uri: str) -> List[str]:
+    def get_all_event_types(self, user_uri: str) -> List[MutableMapping]:
         """
         Get all event types by recursively crawling on all result pages.
 
@@ -258,14 +258,14 @@ class CalendlyAPI(object):
         
         data = first['collection']
 
-        while (next_page):
+        while next_page:
             page = self.request.get(next_page).json()
             data += page['collection']
             next_page = page['pagination']['next_page']
         
         return data
 
-    def get_all_scheduled_events(self, user_uri: str) -> List[str]:
+    def get_all_scheduled_events(self, user_uri: str) -> List[MutableMapping]:
         """
         Get all scheduled events by recursively crawling on all result pages.
 
@@ -310,5 +310,4 @@ class CalendlyAPI(object):
             if not next_page:
                 break
             page = self.request.get(next_page).json()
-        return
         
