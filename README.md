@@ -34,6 +34,28 @@ calendly = CalendlyAPI(api_key)
 - `get_event_details` - Get information about the event
 - `list_event_invitees` - Get all invitees for a event
 
+### Oauth2
+Getting started with [Calendly Oauth2 API](https://developer.calendly.com/api-docs/YXBpOjU5MTQwNw-o-auth-2-0) .
+```
+from calendly import CalendlyOauth2
+
+client_id = "<client_id>"
+client_secret = "<client_secret>"
+redirect_uri = "<redirect_uri>"
+
+oauth2 = CalendlyOauth2(
+    client_id,
+    client_secret,
+    redirect_uri
+)
+```
+
+### Methods
+- `authorization_url` - Returns the formatted authorization URL
+- `get_access_token` - Send a request to obtain the given access token
+- `revoke_access_token` - Send a request to revoke the given access token
+- `refresh_access_token` - Send a request to refresh the given access token
+- `introspect_access_token` - Send a request to bring details about the given access token
 
 ## Issues
 Feel free to submit issues and enhancement requests.
