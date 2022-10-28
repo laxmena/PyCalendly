@@ -225,18 +225,30 @@ class CalendlyAPI(object):
         response = self.request.get(url)
         return response.json()
 
-    def list_event_invitees(self, uuid: str) -> List[MutableMapping]:
+    def list_event_invitees(self, uuid: str, count: int=20, email: str=None, page_token: str=None, sort: str='created_at:asc', status: str=None) -> List[MutableMapping]:
         """
         Returns a list of Invitees for an Event.
 
         Args:
             uuid (str): Event's unique identifier.
+            count (int, optional): The number of rows to return. Defaults to "20".
+            email: Indicates if the results should be filtered by email address. Defaults to None.
+            page_token: The token to pass to get the next or previous portion of the collection. Defaults to None.
+            sort: Order results by the created_at field and direction specified: ascending ("asc") or descending ("desc"). Defaults to "created_at:asc".
+            status: Indicates if the invitee "canceled" or still "active". Defaults to None.
 
         Returns:
             dict: json decoded response
         """
         url = f'{EVENTS}/' + uuid + '/invitees'
-        response = self.request.get(url)
+        data = {'count': count, 'sort': sort}
+        if (email):
+            data['email'] = email
+        if (page_token):
+            data['page_token'] = page_token
+        if (status):
+            data['status'] = status
+        response = self.request.get(url, data)
         return response.json()
 
     def get_all_event_types(self, user_uri: str) -> List[str]:
