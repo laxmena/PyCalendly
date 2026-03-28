@@ -40,7 +40,7 @@ jobs:
           command: |
                   python -m virtualenv env
                   . env/bin/activate
-                  pip install --no-cache-dir -r requirements.txt
+                  pip install --no-cache-dir -r requirements-dev.txt
 
       # - run:
       #     name: Run tests
