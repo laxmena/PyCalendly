@@ -2,7 +2,7 @@
 
 All notable changes to PyCalendly will be documented here.
 
-## [0.1.0] - 2026-03-27
+## [1.1.0] - 2026-03-27
 
 ### Added
 - OAuth2 authentication support via new `CalendlyOauth2` class
@@ -23,6 +23,6 @@ All notable changes to PyCalendly will be documented here.
 - Removed unnecessary parentheses in conditionals throughout `calendly.py`
 - `user == None` replaced with `user is None`
 
-## [0.0.1] - 2021-07-29
+## [1.0.0] - 2021-07-29
 
 - Initial release
