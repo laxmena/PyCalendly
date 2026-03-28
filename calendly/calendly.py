@@ -174,7 +174,7 @@ class CalendlyAPI(object):
         response = self.request.get(f'{EVENT_TYPE}/' + uuid, data)
         return response.json()
 
-    def list_events(self, count: int=20, organization: str=None, sort: str=None, user_uri: str=None, status: str=None) -> MutableMapping:
+    def list_events(self, count: int=20, organization: str=None, sort: str=None, user_uri: str=None, status: str=None, min_start_time: str=None, max_start_time: str=None) -> MutableMapping:
         """
         Returns a List of Events
 
@@ -184,6 +184,8 @@ class CalendlyAPI(object):
             sort (str, optional): comma seperated list of {field}:{direction} values. Defaults to None.
             user_uri (str, optional): User URI. Defaults to None.
             status (str, optional): 'active' or 'canceled'. Defaults to None.
+            min_start_time (str, optional): Include events with start times after this UTC time (e.g. "2020-01-02T03:04:05.678Z"). Defaults to None.
+            max_start_time (str, optional): Include events with start times prior to this UTC time (e.g. "2020-01-02T03:04:05.678Z"). Defaults to None.
 
         Returns:
             dict: json decoded response of list of events.
@@ -197,6 +199,10 @@ class CalendlyAPI(object):
             data['user'] = user_uri
         if status:
             data['status'] = status
+        if min_start_time:
+            data['min_start_time'] = min_start_time
+        if max_start_time:
+            data['max_start_time'] = max_start_time
         response = self.request.get(EVENTS, data)
         return response.json()
 
@@ -265,17 +271,19 @@ class CalendlyAPI(object):
         
         return data
 
-    def get_all_scheduled_events(self, user_uri: str) -> List[MutableMapping]:
+    def get_all_scheduled_events(self, user_uri: str, min_start_time: str=None, max_start_time: str=None) -> List[MutableMapping]:
         """
         Get all scheduled events by recursively crawling on all result pages.
 
         Args:
             user_uri (str, optional): User URI.
+            min_start_time (str, optional): Include events with start times after this UTC time (e.g. "2020-01-02T03:04:05.678Z"). Defaults to None.
+            max_start_time (str, optional): Include events with start times prior to this UTC time (e.g. "2020-01-02T03:04:05.678Z"). Defaults to None.
 
         Returns:
             list: json scheduled event objects
         """
-        first = self.list_events(user_uri=user_uri, count=100)
+        first = self.list_events(user_uri=user_uri, count=100, min_start_time=min_start_time, max_start_time=max_start_time)
         next_page = first['pagination']['next_page']
         
         data = first['collection']
