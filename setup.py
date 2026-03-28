@@ -8,7 +8,7 @@ required = ['requests']
 
 setup(
     name='PyCalendly',
-    version="0.1.0",
+    version="1.1.0",
     author="laxmena",
     author_email="ConnectWith@laxmena.com",
     license="MIT",
