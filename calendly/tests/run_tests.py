@@ -42,32 +42,134 @@ class TestCalendlyExceptions(unittest.TestCase):
 
 class TestCalendlyReq(unittest.TestCase):
 
-    def test_constructor(self):
-        pass
+    def test_constructor_with_token(self):
+        req = CalendlyReq(token='test_token')
+        self.assertEqual(req.headers, {'authorization': 'Bearer test_token'})
+
+    def test_constructor_with_headers(self):
+        headers = {'authorization': 'Bearer custom', 'x-custom': 'value'}
+        req = CalendlyReq(headers=headers)
+        self.assertEqual(req.headers, headers)
+
+    def test_constructor_raises_with_both_token_and_headers(self):
+        with self.assertRaises(CalendlyException):
+            CalendlyReq(token='token', headers={'authorization': 'Bearer token'})
 
     def test__get_oauth2_error_from_response(self):
-        pass
+        req = CalendlyReq(token='test_token')
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'error': 'invalid_token', 'error_description': 'Token expired'}
+        result = req._get_oauth2_error_from_response(mock_response)
+        self.assertEqual(result, ('invalid_token', 'Token expired', []))
+
+    def test__get_oauth2_error_from_response_missing_keys(self):
+        req = CalendlyReq(token='test_token')
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'something': 'else'}
+        result = req._get_oauth2_error_from_response(mock_response)
+        self.assertIsNone(result)
 
     def test__get_api_error_from_response(self):
-        pass
+        req = CalendlyReq(token='test_token')
 
-    def test__get_error_type_and_description_from_response(self):
-        pass
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'title': 'Not Found', 'message': 'Resource not found', 'details': [{'key': 'val'}]}
+        result = req._get_api_error_from_response(mock_response)
+        self.assertEqual(result, ('Not Found', 'Resource not found', [{'key': 'val'}]))
 
-    def test_process_request(self):
-        pass
+    def test__get_api_error_from_response_no_details(self):
+        req = CalendlyReq(token='test_token')
 
-    def test_get(self):
-        pass
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'title': 'Unauthorized', 'message': 'Invalid credentials'}
+        result = req._get_api_error_from_response(mock_response)
+        self.assertEqual(result, ('Unauthorized', 'Invalid credentials', []))
 
-    def test_post(self):
-        pass
+    def test__get_api_error_from_response_missing_keys(self):
+        req = CalendlyReq(token='test_token')
 
-    def test_delete(self):
-        pass
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'something': 'else'}
+        result = req._get_api_error_from_response(mock_response)
+        self.assertIsNone(result)
 
-    def test_put(self):
-        pass
+    def test__get_error_type_and_description_from_response_oauth2(self):
+        req = CalendlyReq(token='test_token')
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'error': 'invalid_token', 'error_description': 'Token expired'}
+        error_type, error_desc, error_details = req._get_error_type_and_description_from_response(mock_response)
+        self.assertEqual(error_type, 'invalid_token')
+        self.assertEqual(error_desc, 'Token expired')
+
+    def test__get_error_type_and_description_from_response_api(self):
+        req = CalendlyReq(token='test_token')
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'title': 'Not Found', 'message': 'Resource not found'}
+        error_type, error_desc, _ = req._get_error_type_and_description_from_response(mock_response)
+        self.assertEqual(error_type, 'Not Found')
+        self.assertEqual(error_desc, 'Resource not found')
+
+    def test__get_error_type_and_description_from_response_fallback(self):
+        req = CalendlyReq(token='test_token')
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = {}
+        error_type, error_desc, _ = req._get_error_type_and_description_from_response(mock_response)
+        self.assertEqual(error_type, 'error')
+        self.assertEqual(error_desc, 'Unknown Error.')
+
+    @patch('requests.get')
+    def test_process_request_success(self, mock_get):
+        req = CalendlyReq(token='test_token')
+        mock_get.return_value = MockResponse('{"key": "value"}', 200)
+
+        response = req.process_request('get', 'https://api.calendly.com/test')
+        self.assertEqual(response.status_code, 200)
+        mock_get.assert_called_once_with('https://api.calendly.com/test', json=None, headers={'authorization': 'Bearer test_token'})
+
+    @patch('requests.get')
+    def test_process_request_raises_on_error_status(self, mock_get):
+        req = CalendlyReq(token='test_token')
+        mock_get.return_value = MockResponse('{"title": "Not Found", "message": "Resource not found"}', 404)
+
+        with self.assertRaises(CalendlyException):
+            req.process_request('get', 'https://api.calendly.com/test')
+
+    @patch('requests.get')
+    def test_get(self, mock_get):
+        req = CalendlyReq(token='test_token')
+        mock_get.return_value = MockResponse('{}', 200)
+
+        req.get('https://api.calendly.com/test', {'param': 'value'})
+        mock_get.assert_called_once_with('https://api.calendly.com/test', json={'param': 'value'}, headers={'authorization': 'Bearer test_token'})
+
+    @patch('requests.post')
+    def test_post(self, mock_post):
+        req = CalendlyReq(token='test_token')
+        mock_post.return_value = MockResponse('{}', 200)
+
+        req.post('https://api.calendly.com/test', {'param': 'value'})
+        mock_post.assert_called_once_with('https://api.calendly.com/test', json={'param': 'value'}, headers={'authorization': 'Bearer test_token'})
+
+    @patch('requests.delete')
+    def test_delete(self, mock_delete):
+        req = CalendlyReq(token='test_token')
+        mock_delete.return_value = MockResponse('{}', 200)
+
+        req.delete('https://api.calendly.com/test')
+        mock_delete.assert_called_once_with('https://api.calendly.com/test', json=None, headers={'authorization': 'Bearer test_token'})
+
+    @patch('requests.put')
+    def test_put(self, mock_put):
+        req = CalendlyReq(token='test_token')
+        mock_put.return_value = MockResponse('{}', 200)
+
+        req.put('https://api.calendly.com/test', {'param': 'value'})
+        mock_put.assert_called_once_with('https://api.calendly.com/test', json={'param': 'value'}, headers={'authorization': 'Bearer test_token'})
 
 
 # Set HTTP mock response class
